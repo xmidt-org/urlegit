@@ -7,7 +7,7 @@ URLegit is a library for validating URLs.
 [![codecov.io](https://codecov.io/github/xmidt-org/urlegit/coverage.svg?branch=main)](http://codecov.io/github/xmidt-org/urlegit?branch=main)
 [![Go Report Card](https://goreportcard.com/badge/github.com/xmidt-org/urlegit)](https://goreportcard.com/report/github.com/xmidt-org/urlegit)
 [![Apache V2 License](https://img.shields.io/badge/license-Apache%20V2-blue.svg)](https://github.com/xmidt-org/urlegit/blob/main/LICENSE)
-[![GitHub Release](https://img.shields.io/github/release/xmidt-org/urlegit.svg)](CHANGELOG.md)
+[![GitHub Release](https://img.shields.io/github/release/xmidt-org/urlegit.svg)](https://github.com/xmidt-org/urlegit/releases)
 [![GoDoc](https://pkg.go.dev/badge/github.com/xmidt-org/urlegit)](https://pkg.go.dev/github.com/xmidt-org/urlegit)
 
 ## Summary
@@ -38,7 +38,7 @@ func main() {
 
 	url := "https://github.com"
 	fmt.Printf("Is %q allowed? %t\n", url, c.Legit(url))
-    
+
 	// Output:
 	// Is "https://github.com" allowed? true
 }
