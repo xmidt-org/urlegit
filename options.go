@@ -9,8 +9,12 @@ import (
 
 // Resolver is a function that returns a list of IP addresses for a given
 // host.
+//
+// To use the default go resolver, use the net.LookupIP function.
 type Resolver func(host string) ([]net.IP, error)
 
+// Error returns an option that will cause the Checker to return the given
+// error.
 func Error(err error) Option {
 	return errorOption{err: err}
 }
