@@ -9,7 +9,7 @@ import (
 	"github.com/xmidt-org/urlegit"
 )
 
-func Example_Usage() {
+func Example() {
 	c, err := urlegit.New(
 		urlegit.OnlyScheme("https"),
 		urlegit.ForbidSpecialUseDomains(),
