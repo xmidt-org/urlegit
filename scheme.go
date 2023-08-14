@@ -5,12 +5,11 @@ package urlegit
 
 import "strings"
 
-// Schemes returns an Option that allows any of the provided schemes.
-// Multiple Schemes() options are allowed and the schemes are combined.
-// If an OnlyScheme() option is provided, Schemes() options are ignored.
+// OnlyAllowSchemes returns an Option that allows any of the provided schemes.
+// Multiple Schemes() options are allowed, but they are applied seprately.
 //
 // Scheme validation is case-insensitive.
-func Schemes(s ...string) Option {
+func OnlyAllowSchemes(s ...string) Option {
 	for i, v := range s {
 		s[i] = strings.ToLower(v)
 	}
@@ -22,33 +21,20 @@ type schemesOption struct {
 }
 
 func (s schemesOption) String() string {
-	return "Schemes('" + strings.Join(s.schemes, "', '") + "')"
+	return "OnlyAllowSchemes('" + strings.Join(s.schemes, "', '") + "')"
 }
 
 func (s schemesOption) apply(c *Checker) {
-	if !c.onlyOneScheme {
-		c.allowedSchemes = append(c.allowedSchemes, s.schemes...)
+	c.schemeRules = append(c.schemeRules, schemeChecker(s.schemes...))
+}
+
+func schemeChecker(schemes ...string) SchemeVador {
+	return func(s string) error {
+		for _, v := range schemes {
+			if s == v {
+				return nil
+			}
+		}
+		return ErrSchemeNotAllowed
 	}
-}
-
-//------------------------------------------------------------------------------
-
-// OnlyScheme returns an Option that allows only the provided scheme.  The last
-// OnlyScheme option wins.  Schemes() options are ignored if an OnlyScheme
-// option is provided.
-//
-// Scheme validation is case-insensitive.
-func OnlyScheme(s string) Option {
-	return onlySchemeOption(strings.ToLower(s))
-}
-
-type onlySchemeOption string
-
-func (o onlySchemeOption) String() string {
-	return "OnlyScheme('" + string(o) + "')"
-}
-
-func (o onlySchemeOption) apply(c *Checker) {
-	c.onlyOneScheme = true
-	c.allowedSchemes = []string{string(o)}
 }

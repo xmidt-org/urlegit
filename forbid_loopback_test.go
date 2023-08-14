@@ -31,13 +31,8 @@ func TestForbidLoopbackOption(t *testing.T) {
 			hosts:       loopback,
 			expectedErr: ErrLoopback,
 		}, {
-			description: "too many resolvers",
-			opt:         ForbidLoopback(mockResolver, mockResolver),
-			failOnNew:   true,
-			expectedErr: ErrInvalidInput,
-		}, {
 			description: "forbid loopback with resolver",
-			opt:         ForbidLoopback(mockResolver),
+			opts:        []Option{ForbidLoopback(), WithResolver(mockResolver)},
 			hosts: []string{
 				mockLoopbackURL,
 				mockPrivateLoopbackURL,
@@ -45,11 +40,11 @@ func TestForbidLoopbackOption(t *testing.T) {
 			expectedErr: ErrLoopback,
 		}, {
 			description: "forbid loopback with resolver, but host is not loopback",
-			opt:         ForbidLoopback(mockResolver),
+			opts:        []Option{ForbidLoopback(), WithResolver(mockResolver)},
 			host:        mockPrivateURL,
 		}, {
 			description: "forbid loopback with resolver, but resolver fails",
-			opt:         ForbidLoopback(mockResolver),
+			opts:        []Option{ForbidLoopback(), WithResolver(mockResolver)},
 			host:        mockUnsupportedURL,
 			expectedErr: errAny,
 		},
@@ -60,7 +55,4 @@ func TestForbidLoopbackOption(t *testing.T) {
 func TestForbidLoopbackOptionString(t *testing.T) {
 	opt := ForbidLoopback()
 	assert.Equal(t, "ForbidLoopback()", opt.String())
-
-	opt = ForbidLoopback(mockResolver)
-	assert.Equal(t, "ForbidLoopback(resolver)", opt.String())
 }

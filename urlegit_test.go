@@ -13,33 +13,6 @@ import (
 
 var (
 	errAny = errors.New("any error")
-
-	/*
-		specialDomains = []string{
-			"http://example.co",
-			"http://example.com",
-			"http://example.edu",
-			"http://example.gov",
-			"http://example.io",
-			"http://example.org",
-			"http://example.net",
-			"http://example.mil",
-			"http://foo.alt",
-			"http://foo.example",
-			"http://foo.local",
-			"http://foo.localhost",
-			"http://foo.test",
-		}
-
-		specialSubnets = []string{
-			"http://0.0.0.1",
-			"http://[fe80::1]",
-		}
-
-		random = []string{
-			"https://[2001:db8:85a3:8d3:1319:8a2e:370:7348]:443/",
-		}
-	*/
 )
 
 func TestNew(t *testing.T) {
@@ -97,8 +70,16 @@ func TestText(t *testing.T) {
 	testCommon(t, tests)
 }
 
+func TestURL(t *testing.T) {
+	assert := assert.New(t)
+
+	c := Must()
+	err := c.URL(nil)
+	assert.ErrorIs(err, ErrInvalidInput)
+}
+
 func TestLegit(t *testing.T) {
-	c := Must(Schemes("http"))
+	c := Must(OnlyAllowSchemes("http"))
 	assert.Equal(t, true, c.Legit("http://example.com"))
 	assert.Equal(t, false, c.Legit("https://example.com"))
 }
@@ -107,7 +88,7 @@ func TestURLegit(t *testing.T) {
 	good, _ := url.Parse("http://example.com")
 	bad, _ := url.Parse("https://example.com")
 
-	c := Must(Schemes("http"))
+	c := Must(OnlyAllowSchemes("http"))
 
 	assert.Equal(t, true, c.URLegit(good))
 	assert.Equal(t, false, c.URLegit(bad))
@@ -117,11 +98,11 @@ func TestCheckerString(t *testing.T) {
 	c := Must()
 	assert.Equal(t, "urlegit.Checker{}", c.String())
 
-	c = Must(Schemes("http"))
-	assert.Equal(t, "urlegit.Checker{ Schemes('http') }", c.String())
+	c = Must(OnlyAllowSchemes("http"))
+	assert.Equal(t, "urlegit.Checker{ OnlyAllowSchemes('http') }", c.String())
 
-	c = Must(Schemes("http"), Schemes("https"))
-	assert.Equal(t, "urlegit.Checker{ Schemes('http'), Schemes('https') }", c.String())
+	c = Must(OnlyAllowSchemes("http", "https"))
+	assert.Equal(t, "urlegit.Checker{ OnlyAllowSchemes('http', 'https') }", c.String())
 }
 
 func TestErrorString(t *testing.T) {

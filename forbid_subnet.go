@@ -84,7 +84,7 @@ func (n forbidSubnetOption) apply(c *Checker) {
 	}
 }
 
-func forbidSubnets(subnets []*net.IPNet) ipVador {
+func forbidSubnets(subnets []*net.IPNet) IPVador {
 	return func(ip *net.IP) error {
 		for _, subnet := range subnets {
 			if subnet.Contains(*ip) {
@@ -95,7 +95,7 @@ func forbidSubnets(subnets []*net.IPNet) ipVador {
 	}
 }
 
-func forbidSubnetsUser(subnets []*net.IPNet, fn Resolver) hostVador {
+func forbidSubnetsUser(subnets []*net.IPNet, fn Resolver) HostVador {
 	return func(host string) error {
 		ips, err := fn(host)
 		if err != nil {

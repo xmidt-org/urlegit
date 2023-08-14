@@ -11,7 +11,7 @@ import (
 
 func Example() {
 	c, err := urlegit.New(
-		urlegit.OnlyScheme("https"),
+		urlegit.OnlyAllowSchemes("https"),
 		urlegit.ForbidSpecialUseDomains(),
 	)
 

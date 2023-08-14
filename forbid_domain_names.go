@@ -80,7 +80,7 @@ func (n forbidDomainNamesOption) apply(c *Checker) {
 	c.hostRules = append(c.hostRules, forbidDomainNamesHostname(n.domains))
 }
 
-func forbidDomainNamesHostname(forbid []*domainName) hostVador {
+func forbidDomainNamesHostname(forbid []*domainName) HostVador {
 	return func(host string) error {
 		subs, err := hostnameProcess(host)
 		if err != nil {

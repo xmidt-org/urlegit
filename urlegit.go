@@ -18,16 +18,18 @@ var (
 	ErrRootDomainNotAllowed = fmt.Errorf("root domain not allowed")
 	ErrInvalidInput         = fmt.Errorf("invalid input")
 	ErrSubnetNotAllowed     = fmt.Errorf("subnet not allowed")
+	ErrIPNotAllowed         = fmt.Errorf("IPs not allowed")
 )
 
 // Checker is a URL validator.
 type Checker struct {
-	onlyOneScheme  bool
-	allowedSchemes []string
-	ipRules        []ipVador
-	hostRules      []hostVador
-	err            error
-	opts           []Option
+	schemeRules   []SchemeVador
+	ipBeforeRules []IPVador
+	resolver      Resolver
+	hostRules     []HostVador
+	ipRules       []IPVador
+	err           error
+	opts          []Option
 }
 
 // Option is an option for a Checker.
@@ -36,8 +38,14 @@ type Option interface {
 	apply(*Checker)
 }
 
-type ipVador func(*net.IP) error
-type hostVador func(string) error
+// SchemeVador is a function that validates a scheme.
+type SchemeVador func(string) error
+
+// IPVador is a function that validates an IP.
+type IPVador func(*net.IP) error
+
+// HostVador is a function that validates a host.
+type HostVador func(string) error
 
 // New returns a new Checker with the provided options applied.
 func New(opts ...Option) (*Checker, error) {
@@ -93,9 +101,16 @@ func (c *Checker) Text(s string) error {
 // URLDetails returns an error if the provided URL is not valid based on
 // the provided options.
 func (c *Checker) URL(u *url.URL) error {
-	err := c.scheme(u)
-	if err != nil {
-		return err
+	if u == nil {
+		return ErrInvalidInput
+	}
+
+	scheme := strings.ToLower(u.Scheme)
+	for _, rule := range c.schemeRules {
+		err := rule(scheme)
+		if err != nil {
+			return err
+		}
 	}
 
 	host := strings.ToLower(u.Hostname())
@@ -103,19 +118,42 @@ func (c *Checker) URL(u *url.URL) error {
 		return ErrHostnameEmpty
 	}
 
-	// If the host is an IP address, it can't be a hostname, so only
-	// run the IP rules or the hostname rules.
+	var ips []net.IP
 	ip := net.ParseIP(host)
+
 	if ip != nil {
-		for _, rule := range c.ipRules {
-			err = rule(&ip)
+		ips = []net.IP{ip}
+		for _, rule := range c.ipBeforeRules {
+			err := rule(&ip)
 			if err != nil {
 				return err
 			}
 		}
 	} else {
 		for _, rule := range c.hostRules {
-			err = rule(host)
+			err := rule(host)
+			if err != nil {
+				return err
+			}
+		}
+
+		if c.resolver != nil {
+			var err error
+			// Replace the IPs with the newly resolved IPs.
+			ips, err = c.resolver(host)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(ips) == 0 {
+		return nil
+	}
+
+	for _, rule := range c.ipRules {
+		for _, ip := range ips {
+			err := rule(&ip)
 			if err != nil {
 				return err
 			}
@@ -145,15 +183,4 @@ func (c *Checker) String() string {
 	}
 	buf.WriteString("}")
 	return buf.String()
-}
-
-func (c *Checker) scheme(u *url.URL) error {
-	scheme := strings.ToLower(u.Scheme)
-
-	for _, s := range c.allowedSchemes {
-		if scheme == s {
-			return nil
-		}
-	}
-	return ErrSchemeNotAllowed
 }

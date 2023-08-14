@@ -32,7 +32,7 @@ func testCommon(t *testing.T, tests []sharedTest) {
 
 			opts := make([]Option, 0, len(tc.opts)+1)
 			if !tc.noHttp {
-				opts = append(opts, Schemes("http"))
+				opts = append(opts, OnlyAllowSchemes("http"))
 			}
 			opts = append(opts, tc.opt)
 			opts = append(opts, tc.opts...)
