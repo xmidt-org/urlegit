@@ -10,4 +10,4 @@ on:
 
 jobs:
   release:
-    uses: xmidt-org/shared-go/.github/workflows/auto-releaser.yml@6a6e2837365277508a83af5aabe4f17d801a1cab # v4.3.1
+    uses: xmidt-org/shared-go/.github/workflows/auto-releaser.yml@3bef4e75bb010c08cf96c3dee60f126a220b8073 # v4.3.2
