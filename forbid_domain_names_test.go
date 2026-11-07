@@ -65,10 +65,11 @@ func Test_hostnameProcess(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.s, func(t *testing.T) {
 			assert := assert.New(t)
+			require := require.New(t)
 
 			got, err := hostnameProcess(tc.s)
 
-			assert.ErrorIs(err, tc.expectedErr)
+			require.ErrorIs(err, tc.expectedErr)
 			if tc.expectedErr == nil {
 				assert.Equal(tc.want, got)
 			}
@@ -93,11 +94,11 @@ func Test_newDomainName(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.s, func(t *testing.T) {
 			assert := assert.New(t)
-			//require := require.New(t)
+			require := require.New(t)
 
 			got, err := newDomainName(tc.s)
 
-			assert.ErrorIs(err, tc.expectedErr)
+			require.ErrorIs(err, tc.expectedErr)
 			if tc.expectedErr == nil {
 				assert.Equal(&tc.want, got)
 			}

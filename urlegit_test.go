@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var (
@@ -33,10 +34,11 @@ func TestNew(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.description, func(t *testing.T) {
 			assert := assert.New(t)
+			require := require.New(t)
 
 			got, err := New(tc.opts...)
 
-			assert.ErrorIs(err, tc.expectedErr)
+			require.ErrorIs(err, tc.expectedErr)
 			if tc.expectedErr == nil {
 				assert.NotNil(got)
 			}
@@ -80,8 +82,8 @@ func TestURL(t *testing.T) {
 
 func TestLegit(t *testing.T) {
 	c := Must(OnlyAllowSchemes("http"))
-	assert.Equal(t, true, c.Legit("http://example.com"))
-	assert.Equal(t, false, c.Legit("https://example.com"))
+	assert.True(t, c.Legit("http://example.com"))
+	assert.False(t, c.Legit("https://example.com"))
 }
 
 func TestURLegit(t *testing.T) {
@@ -90,8 +92,8 @@ func TestURLegit(t *testing.T) {
 
 	c := Must(OnlyAllowSchemes("http"))
 
-	assert.Equal(t, true, c.URLegit(good))
-	assert.Equal(t, false, c.URLegit(bad))
+	assert.True(t, c.URLegit(good))
+	assert.False(t, c.URLegit(bad))
 }
 
 func TestCheckerString(t *testing.T) {

@@ -4,6 +4,7 @@
 package urlegit
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"net/url"
@@ -11,14 +12,14 @@ import (
 )
 
 var (
-	ErrSchemeNotAllowed     = fmt.Errorf("scheme not allowed")
-	ErrHostnameEmpty        = fmt.Errorf("hostname is empty")
-	ErrLoopback             = fmt.Errorf("loopback address")
-	ErrDomainNotAllowed     = fmt.Errorf("domain not allowed")
-	ErrRootDomainNotAllowed = fmt.Errorf("root domain not allowed")
-	ErrInvalidInput         = fmt.Errorf("invalid input")
-	ErrSubnetNotAllowed     = fmt.Errorf("subnet not allowed")
-	ErrIPNotAllowed         = fmt.Errorf("IPs not allowed")
+	ErrSchemeNotAllowed     = errors.New("scheme not allowed")
+	ErrHostnameEmpty        = errors.New("hostname is empty")
+	ErrLoopback             = errors.New("loopback address")
+	ErrDomainNotAllowed     = errors.New("domain not allowed")
+	ErrRootDomainNotAllowed = errors.New("root domain not allowed")
+	ErrInvalidInput         = errors.New("invalid input")
+	ErrSubnetNotAllowed     = errors.New("subnet not allowed")
+	ErrIPNotAllowed         = errors.New("IPs not allowed")
 )
 
 // Checker is a URL validator.
@@ -153,6 +154,7 @@ func (c *Checker) URL(u *url.URL) error {
 
 	for _, rule := range c.ipRules {
 		for _, ip := range ips {
+			ip := ip
 			err := rule(&ip)
 			if err != nil {
 				return err

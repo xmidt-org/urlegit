@@ -15,14 +15,14 @@ import (
 // and check the returned IP addresses for loopback addresses.  If the subnet is
 // invalid then the Option will return an error.
 func ForbidSubnet(subnet string, resolver ...Resolver) Option {
-	return forbidSubnetsOption("ForbidSubnet", []string{subnet}, resolver...)
+	return forbidSubnetsOption([]string{subnet}, resolver...)
 }
 
 func ForbidSubnets(subnets []string, resolver ...Resolver) Option {
-	return forbidSubnetsOption("ForbidSubnets", subnets, resolver...)
+	return forbidSubnetsOption(subnets, resolver...)
 }
 
-func forbidSubnetsOption(name string, subnets []string, resolver ...Resolver) Option {
+func forbidSubnetsOption(subnets []string, resolver ...Resolver) Option {
 	f := forbidSubnetOption{
 		optName:   "ForbidSubnet",
 		subnets:   make([]*net.IPNet, 0, len(subnets)),

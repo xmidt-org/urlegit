@@ -62,14 +62,14 @@ func (n forbidDomainNamesOption) String() string {
 	b.WriteString("(")
 	comma := ""
 	for _, d := range n.domains {
-
-		if d != nil {
-			b.WriteString(comma)
-			b.WriteString("'")
-			b.WriteString(d.original)
-			b.WriteString("'")
-			comma = ", "
+		if d == nil {
+			continue
 		}
+		b.WriteString(comma)
+		b.WriteString("'")
+		b.WriteString(d.original)
+		b.WriteString("'")
+		comma = ", "
 	}
 	b.WriteString(")")
 
